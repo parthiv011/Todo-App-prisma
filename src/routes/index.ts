@@ -1,9 +1,9 @@
 import { Router } from "express";
-const userRouter = require('./user');
-const todosRouter = require('./todos');
+import userRouter from './user';
+import todosRouter from './todos';
 const router = Router();
 
-router.use('/',(req, res) => {
+router.get('/',(req, res) => {
     res.json({
         msg: "Welcome to api!"
     })
