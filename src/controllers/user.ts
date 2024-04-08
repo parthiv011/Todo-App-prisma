@@ -114,5 +114,44 @@ export const login = async (req: any, res: any) => {
   }
 };
 export const updateUser = async (req:any, res: any) => {
-  
+  try {
+    const  { id } = req.params;
+    const data = req.body;
+
+    const  user = await prisma.user.update({
+      where: {
+        id: parseInt(id)
+      },
+      data: {
+        firstName: data.firstName || "",
+        lastName: data.lastName || "",
+      }
+    })
+  }
+  catch(e){
+    console.error(e);
+    return res.status(500).json({
+      error: "Internal server error!",
+    });
+  }
+}
+
+export const getProfile = async (req: any, res: any) => {
+  try {
+    const user = await prisma.user.findUnique(req.userId);
+    if (!user) {
+      return res.status(400).json({
+        msg: "Failed to load user.",
+      })
+    }
+    return res.status(200).json( {
+      msg: "Successfully loaded user.",
+      user: user,
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({
+      error: "Internal server error!",
+    });
+  }
 }

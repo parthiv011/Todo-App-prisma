@@ -27,6 +27,6 @@ model todos {
   title String
   description String
   done Boolean @default(false)
-  userId  Int
-  user User @relation(fields: [userId], references: [id])
+  user_id  Int
+  user User @relation(fields: [user_id], references: [id])
 }
