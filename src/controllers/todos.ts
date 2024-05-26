@@ -9,12 +9,13 @@ interface todo {
 }
 export const addTodos = async (req: any, res: any) => {
   try {
-    const { title, description } = createTodoSchema.parse(req.body);
+    const { userId, title, description } = createTodoSchema.parse(req.body);
+    console.log(userId);
     await prisma.todos.create({
       data: {
         title,
         description,
-        userId: req.userId,
+        user_id: userId,
       },
     });
     return res.status(201).json({
@@ -30,7 +31,7 @@ export const getTodos = async (req: any, res: any) => {
   try {
     const todos = await prisma.todos.findMany({
       where: {
-        userId: req.userId,
+        id: req.userId,
       },
       select: {
         id: true,
@@ -56,7 +57,7 @@ export const searchTodos = async (req: any, res: any) => {
     const todos = await prisma.todos.findMany({
       where: {
         // Ensure todos belong to the logged-in user
-        userId: req.userId,
+        id: req.userId,
         OR: [
           // Filter todos by title and description
           { title: { contains: filter, mode: "insensitive" } },
@@ -89,37 +90,37 @@ export const updateTodo = async (req: any, res: any) => {
       data: {
         title,
         description,
-        done
+        done,
       },
       select: {
         id: true,
         title: true,
         description: true,
         done: true,
-      }
+      },
     });
 
     return res.json({
-        msg: "Updated successfully!",
-        changedTodo,
-    })
+      msg: "Updated successfully!",
+      changedTodo,
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-export const deleteTodo = async (req:any, res: any) => {
-    try {
-        const { id } = req.params;
+export const deleteTodo = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
 
-        await prisma.todos.delete({
-          where: { id: parseInt(id) },
-        });
+    await prisma.todos.delete({
+      where: { id: parseInt(id) },
+    });
 
-        res.json({ msg: 'Todo deleted successfully' });
-      } catch (e) {
-        console.error(e);
-        res.status(500).json({ error: 'Internal Server Error' });
-      }
-}
+    res.json({ msg: "Todo deleted successfully" });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

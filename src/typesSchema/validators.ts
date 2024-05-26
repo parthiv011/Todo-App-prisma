@@ -1,9 +1,13 @@
 import zod from "zod";
 
 export const createTodoSchema = zod.object({
-    title: zod.string().min(1),
+    title: zod.string().min(1, "Title is required"),
     description: zod.string(),
-});
+    userId: zod.number({
+      required_error: "userId is required",
+      invalid_type_error: "userId must be a number"
+    }).positive("userId must be a positive number"),
+  });
 
 export const updateTodoSchema = zod.object({
     title: zod.string().optional(),
