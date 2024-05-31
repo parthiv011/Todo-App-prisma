@@ -102,6 +102,7 @@ export const login = async (req: any, res: any) => {
     );
 
     return res.json({
+      id: user.id,
       token: token,
       username: username,
       name: `${user.firstName} ${user.lastName}`,
@@ -113,38 +114,49 @@ export const login = async (req: any, res: any) => {
     });
   }
 };
-export const updateUser = async (req:any, res: any) => {
+export const updateUser = async (req: any, res: any) => {
   try {
-    const  { id } = req.params;
+    const { id } = req.params;
     const data = req.body;
 
-    const  user = await prisma.user.update({
+    const user = await prisma.user.update({
       where: {
-        id: parseInt(id)
+        id: parseInt(id),
       },
       data: {
         firstName: data.firstName || "",
         lastName: data.lastName || "",
-      }
-    })
-  }
-  catch(e){
+      },
+    });
+  } catch (e) {
     console.error(e);
     return res.status(500).json({
       error: "Internal server error!",
     });
   }
-}
+};
 
 export const getProfile = async (req: any, res: any) => {
   try {
-    const user = await prisma.user.findUnique(req.userId);
+    const userId = req.userId;
+
+    console.log(userId);
+    if (!userId) {
+      return res.status(400).json({
+        msg: "Failed to fetch Id.",
+      });
+    }
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
     if (!user) {
       return res.status(400).json({
         msg: "Failed to load user.",
-      })
+      });
     }
-    return res.status(200).json( {
+    return res.status(200).json({
       msg: "Successfully loaded user.",
       user: user,
     });
@@ -154,4 +166,4 @@ export const getProfile = async (req: any, res: any) => {
       error: "Internal server error!",
     });
   }
-}
+};

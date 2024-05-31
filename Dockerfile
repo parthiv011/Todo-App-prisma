@@ -4,6 +4,9 @@ WORKDIR /app
 
 COPY . .
 
+# Ensure the .env file is copied
+COPY .env .env
+
 RUN npm install
 RUN npm run build
 RUN npx prisma generate
